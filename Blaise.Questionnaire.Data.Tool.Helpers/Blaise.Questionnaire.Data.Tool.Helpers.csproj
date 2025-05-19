@@ -161,6 +161,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="CaseFiles\cati-scenarios.json" />
+    <None Include="CaseFiles\frs-editing-scenarios.json" />
     <None Include="CaseFiles\frs-totalmobile-scenarios.json" />
     <None Include="CaseFiles\lms-totalmobile-scenarios.json" />
     <None Include="packages.config" />
