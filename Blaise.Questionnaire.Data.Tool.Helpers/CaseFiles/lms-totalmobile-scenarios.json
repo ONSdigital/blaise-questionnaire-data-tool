@@ -1,8 +1,9 @@
 [
   {
     "qiD.Serial_Number": "9001",
-    "qDataBag.TLA": "LMB",
+    "qDataBag.TLA": "LMS",
     "qDataBag.Wave": "1",
+	  "dueSecondWave": "1",
     "qdatabag.TelNo": "",
     "qdatabag.TelNo2": "",
     "telNoAppt": "",
@@ -29,6 +30,7 @@
     "qiD.Serial_Number": "9002",
     "qDataBag.TLA": "LMB",
     "qDataBag.Wave": "2",
+	  "dueSecondWave": "1",
     "qdatabag.TelNo": "",
     "qdatabag.TelNo2": "",
     "telNoAppt": "",
@@ -55,6 +57,7 @@
     "qiD.Serial_Number": "9003",
     "qDataBag.TLA": "LMB",
     "qDataBag.Wave": "3",
+	  "dueSecondWave": "",
     "qdatabag.TelNo": "07000000000",
     "qdatabag.TelNo2": "",
     "telNoAppt": "",
