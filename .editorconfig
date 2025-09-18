@@ -1,0 +1,74 @@
+root = true
+
+[*.cs]
+
+# Formatting
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+end_of_line = crlf
+charset = utf-8
+
+# Braces, parentheses, spacing
+csharp_prefer_braces = true
+csharp_space_between_braces = true
+csharp_space_between_parentheses = false
+dotnet_style_spacing_after_comma = true
+dotnet_style_spacing_before_comma = false
+
+# Usings and namespaces
+dotnet_sort_system_directives_first = true
+csharp_prefer_simple_using_statement = true:suggestion
+csharp_style_namespace_declarations = block_scoped:suggestion
+
+# Language usage preferences
+csharp_style_prefer_method_group_conversion = true
+csharp_style_expression_bodied_methods = false
+csharp_style_prefer_top_level_statements = true
+csharp_style_prefer_primary_constructors = true
+csharp_prefer_system_threading_lock = true
+csharp_style_trailing_commas = when_multiline
+csharp_preserve_single_line_statements = false
+
+# Naming
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+dotnet_naming_style.camel_case_with_underscore.capitalization = camel_case
+dotnet_naming_style.camel_case_with_underscore.required_prefix = _
+dotnet_naming_style.begins_with_i.required_prefix = I
+dotnet_naming_style.begins_with_i.capitalization = pascal_case
+dotnet_naming_style.all_caps.capitalization = all_caps
+
+# Interface naming
+dotnet_naming_rule.interface_should_be_begins_with_i.severity = warning
+dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
+dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
+dotnet_naming_symbols.interface.applicable_kinds = interface
+dotnet_naming_symbols.interface.applicable_accessibilities = *
+
+# Types naming
+dotnet_naming_rule.types_should_be_pascal_case.severity = warning
+dotnet_naming_rule.types_should_be_pascal_case.symbols = types
+dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
+dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
+dotnet_naming_symbols.types.applicable_accessibilities = *
+
+# Constants naming
+dotnet_naming_rule.constants_should_be_all_caps.severity = warning
+dotnet_naming_rule.constants_should_be_all_caps.symbols = all_constants
+dotnet_naming_rule.constants_should_be_all_caps.style = all_caps
+dotnet_naming_symbols.all_constants.applicable_kinds = field, local
+dotnet_naming_symbols.all_constants.required_modifiers = const
+
+# Private naming
+dotnet_naming_rule.private_fields_should_be_camel_with_underscore.severity = warning
+dotnet_naming_rule.private_fields_should_be_camel_with_underscore.symbols = private_instance_fields
+dotnet_naming_rule.private_fields_should_be_camel_with_underscore.style = camel_case_with_underscore
+dotnet_naming_symbols.private_instance_fields.applicable_kinds = field
+dotnet_naming_symbols.private_instance_fields.applicable_accessibilities = private
+
+# Disabled
+dotnet_diagnostic.SA0001.severity = none   # suppress disabled XML analysis warning
+dotnet_diagnostic.SA1101.severity = none   # don't force 'this.' prefix on local calls
+dotnet_diagnostic.SA1309.severity = none   # allow field names starting with underscore
+dotnet_diagnostic.SA1633.severity = none   # don't force file headers

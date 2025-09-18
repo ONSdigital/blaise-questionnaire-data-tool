@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Blaise.Nuget.Api.Api;
-using Blaise.Nuget.Api.Contracts.Interfaces;
-using Blaise.Nuget.Api.Contracts.Models;
-
 namespace Blaise.Questionnaire.Data.Tool.Helpers
 {
+    using System.Collections.Generic;
+    using Blaise.Nuget.Api.Api;
+    using Blaise.Nuget.Api.Contracts.Interfaces;
+    using Blaise.Nuget.Api.Contracts.Models;
+
     public class ServerParkHelper
     {
         private readonly IBlaiseServerParkApi _blaiseServerParkApi;

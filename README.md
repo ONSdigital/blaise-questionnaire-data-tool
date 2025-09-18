@@ -7,7 +7,7 @@ A Windows Forms-based tool designed to simplify loading data into a Blaise quest
 **Never commit your `App.config` file with actual connection details.** To prevent sensitive information from being added to Git, you can use the following command to add all files while ignoring the `App.config` file:
 
 ```bash
-git add . ':!Blaise.Questionnaire.Data.Tool.Gui/App.config'
+git add . ':!app.config'
 ```
 
 ## Setup

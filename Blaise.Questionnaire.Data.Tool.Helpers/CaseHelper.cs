@@ -1,14 +1,14 @@
-﻿using Blaise.Nuget.Api.Api;
-using Blaise.Nuget.Api.Contracts.Interfaces;
-using Blaise.Nuget.Api.Contracts.Models;
-using Blaise.Questionnaire.Data.Tool.Helpers.Models;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 namespace Blaise.Questionnaire.Data.Tool.Helpers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using Blaise.Nuget.Api.Api;
+    using Blaise.Nuget.Api.Contracts.Interfaces;
+    using Blaise.Nuget.Api.Contracts.Models;
+    using Blaise.Questionnaire.Data.Tool.Helpers.Models;
+    using Newtonsoft.Json;
+
     public class CaseHelper
     {
         private readonly IBlaiseCaseApi _blaiseCaseApi;
@@ -112,6 +112,12 @@ namespace Blaise.Questionnaire.Data.Tool.Helpers
             Console.WriteLine($"Completed creating cases for questionnaire '{questionnaireName}'");
         }
 
+        private static bool MaxChunkSizeOrMaxCountReached(int count, int maxCount)
+        {
+            const int maxChunkSize = 500;
+            return count % maxChunkSize == 0 || count == maxCount;
+        }
+
         private List<Dictionary<string, string>> GetSampleDataFields(string caseSampleFile)
         {
             if (string.IsNullOrWhiteSpace(caseSampleFile))
@@ -121,12 +127,6 @@ namespace Blaise.Questionnaire.Data.Tool.Helpers
 
             var json = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(File.ReadAllText(caseSampleFile));
             return json;
-        }
-
-        private static bool MaxChunkSizeOrMaxCountReached(int count, int maxCount)
-        {
-            const int maxChunkSize = 500;
-            return count % maxChunkSize == 0 || count == maxCount;
         }
     }
 }

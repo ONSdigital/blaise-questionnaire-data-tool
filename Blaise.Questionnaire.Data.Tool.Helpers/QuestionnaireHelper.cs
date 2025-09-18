@@ -1,12 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Blaise.Nuget.Api.Api;
-using Blaise.Nuget.Api.Contracts.Enums;
-using Blaise.Nuget.Api.Contracts.Interfaces;
-using Blaise.Nuget.Api.Contracts.Models;
-
 namespace Blaise.Questionnaire.Data.Tool.Helpers
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using Blaise.Nuget.Api.Api;
+    using Blaise.Nuget.Api.Contracts.Enums;
+    using Blaise.Nuget.Api.Contracts.Extensions;
+    using Blaise.Nuget.Api.Contracts.Interfaces;
+    using Blaise.Nuget.Api.Contracts.Models;
+    using StatNeth.Blaise.API.ServerManager;
+
     public class QuestionnaireHelper
     {
         private readonly IBlaiseQuestionnaireApi _blaiseQuestionnaireApi;
@@ -22,16 +24,22 @@ namespace Blaise.Questionnaire.Data.Tool.Helpers
         }
 
         public IEnumerable<string> GetQuestionnaires(string serverParkName)
-        {           
-
+        {
             var questionnaires = _blaiseQuestionnaireApi.GetQuestionnaires(serverParkName);
-
             return questionnaires.Select(i => i.Name);
         }
 
         public void InstallQuestionnaire(string questionnaireName, string serverPark, string questionnaireFile)
         {
-            _blaiseQuestionnaireApi.InstallQuestionnaire(questionnaireName, serverPark, questionnaireFile, QuestionnaireInterviewType.Cati);
+            var installOptions = new InstallOptions
+            {
+                DataEntrySettingsName = QuestionnaireDataEntryType.StrictInterviewing.ToString(),
+                InitialAppLayoutSetGroupName = QuestionnaireInterviewType.Cati.FullName(),
+                LayoutSetGroupName = QuestionnaireInterviewType.Cati.FullName(),
+                OverwriteMode = DataOverwriteMode.Always,
+            };
+
+            _blaiseQuestionnaireApi.InstallQuestionnaire(questionnaireName, serverPark, questionnaireFile, installOptions);
         }
     }
 }

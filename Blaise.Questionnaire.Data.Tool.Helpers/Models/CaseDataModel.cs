@@ -1,20 +1,36 @@
-﻿using Blaise.Nuget.Api.Contracts.Models;
-using System.Collections.Generic;
-using System;
-
 namespace Blaise.Questionnaire.Data.Tool.Helpers.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using Blaise.Nuget.Api.Contracts.Models;
+
     public class CaseDataModel
     {
+        private static readonly Random _random = new Random();
+
         public CaseDataModel(int primaryKey, Dictionary<string, string> sampleDataFields = null)
         {
             PrimaryKey = primaryKey.ToString();
             DataFields = InitialiseCaseDataFields(sampleDataFields);
         }
 
-        public CaseModel ToCaseModel()
+        public string PrimaryKey { get; set; }
+
+        public string Uac1 => GenerateRandomUac();
+
+        public string Uac2 => GenerateRandomUac();
+
+        public string Uac3 => GenerateRandomUac();
+
+        public Dictionary<string, string> DataFields { get; }
+
+        public CaseModel ToCaseModel(string primaryKeyFieldName = "QID.Serial_Number")
         {
-            return new CaseModel(PrimaryKey, DataFields);
+            var primaryKeyDict = new Dictionary<string, string>
+            {
+                { primaryKeyFieldName, PrimaryKey },
+            };
+            return new CaseModel(primaryKeyDict, DataFields);
         }
 
         public Dictionary<string, string> InitialiseCaseDataFields(Dictionary<string, string> dataFields)
@@ -22,16 +38,19 @@ namespace Blaise.Questionnaire.Data.Tool.Helpers.Models
             if (dataFields == null)
             {
                 dataFields = new Dictionary<string, string>();
-                // Add default values only if no sample data is provided
-                AddDefaultValues(dataFields);
+                AddDefaultValues(dataFields); // Add default values only if no sample data is provided
             }
             else
             {
-                // Ensure the primary key is always set
-                dataFields["qid.serial_number"] = PrimaryKey;
+                dataFields["qid.serial_number"] = PrimaryKey; // Ensure the primary key is always set
             }
 
             return dataFields;
+        }
+
+        private static string GenerateRandomUac()
+        {
+            return _random.Next(1000, 9999).ToString();
         }
 
         private void AddDefaultValues(Dictionary<string, string> dataFields)
@@ -68,8 +87,8 @@ namespace Blaise.Questionnaire.Data.Tool.Helpers.Models
             dataFields["qsample.postcode"] = "postcode";
             dataFields["qsample.telno"] = "07000000000";
             dataFields["qsample.telno2"] = "07000000000";
-            dataFields["qhadmin.hout"] = "";
-            dataFields["hout"] = "";
+            dataFields["qhadmin.hout"] = string.Empty;
+            dataFields["hout"] = string.Empty;
             dataFields["qhadmin.interviewer[1]"] = "interviewer1";
             dataFields["dmhsize"] = "2";
             dataFields["dmname[1]"] = "dmname1";
@@ -79,30 +98,14 @@ namespace Blaise.Questionnaire.Data.Tool.Helpers.Models
             dataFields["qhousehold.qhhold.person[1].title"] = "title";
             dataFields["qhousehold.qhhold.person[1].fstnme"] = "fstnme";
             dataFields["qhousehold.qhhold.person[1].surnme"] = "surnme";
-            dataFields["qrotate.rdmktnind"] = "";
-            dataFields["qrotate.rhout"] = "";
+            dataFields["qrotate.rdmktnind"] = string.Empty;
+            dataFields["qrotate.rhout"] = string.Empty;
             dataFields["catimana.caticall.regscalls[1].whomade"] = "whomade";
             dataFields["catimana.caticall.regscalls[5].dialresult"] = "1";
             dataFields["catimana.caticall.regscalls[1].whomade"] = "whomade";
             dataFields["catimana.caticall.regscalls[5].dialresult"] = "1";
             dataFields["datamodelname"] = "datamodelname";
             dataFields["offlinecapi.towhom"] = "rich";
-        }
-
-        public string PrimaryKey { get; set; }
-
-        public string Uac1 => GenerateRandomUac();
-
-        public string Uac2 => GenerateRandomUac();
-
-        public string Uac3 => GenerateRandomUac();
-
-        public Dictionary<string, string> DataFields { get; }
-
-        private static string GenerateRandomUac()
-        {
-            var random = new Random();
-            return random.Next(1000, 9999).ToString();
         }
     }
 }

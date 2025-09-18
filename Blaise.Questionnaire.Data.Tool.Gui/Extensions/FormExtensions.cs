@@ -1,15 +1,21 @@
-﻿using System.Windows.Forms;
-
 namespace Blaise.Questionnaire.Data.Tool.Gui.Extensions
 {
+    using System.Windows.Forms;
+
     public static class FormExtensions
     {
         public static int? GetNullableIntegerValue(this TextBox textBox)
         {
-            if (string.IsNullOrWhiteSpace(textBox.Text)) return null;
+            if (string.IsNullOrWhiteSpace(textBox.Text))
+            {
+                return null;
+            }
 
             var successfullyParsed = int.TryParse(textBox.Text, out var integerValue);
-            if (successfullyParsed) return integerValue;
+            if (successfullyParsed)
+            {
+                return integerValue;
+            }
 
             return null;
         }

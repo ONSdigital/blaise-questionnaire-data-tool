@@ -1,14 +1,13 @@
-﻿using Blaise.Nuget.Api.Contracts.Models;
-using Blaise.Nuget.Api.Providers;
-using Blaise.Questionnaire.Data.Tool.Gui.Extensions;
-using Blaise.Questionnaire.Data.Tool.Helpers;
-using System;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-
 namespace Blaise.Questionnaire.Data.Tool.Gui
 {
+    using System;
+    using System.Linq;
+    using System.Windows.Forms;
+    using Blaise.Nuget.Api.Contracts.Models;
+    using Blaise.Nuget.Api.Providers;
+    using Blaise.Questionnaire.Data.Tool.Gui.Extensions;
+    using Blaise.Questionnaire.Data.Tool.Helpers;
+
     public partial class BlaiseQuestionnaireDataTool : Form
     {
         private ConnectionModel _connectionModel;
@@ -17,6 +16,7 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
+            this.openFileDialog.RestoreDirectory = true;
             ToggleControlsByConnectionState(false);
         }
 
@@ -61,6 +61,7 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
                 {
                     continue;
                 }
+
                 cboBinding.SelectedItem = item;
                 break;
             }
@@ -125,6 +126,7 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
             {
                 return;
             }
+
             var serverParks = ServerParkHelper.GetInstance(_connectionModel).GetServerParks();
             cboServerPark.Items.Clear();
             cboServerPark.Items.AddRange(serverParks.Cast<object>().ToArray());
@@ -135,6 +137,7 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
             {
                 return;
             }
+
             cboQuestionnaire.Items.Clear();
             cboQuestionnaire.Items.AddRange(questionnaires.Cast<object>().ToArray());
             cboQuestionnaire.SelectedIndex = 0;
@@ -148,6 +151,7 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
             {
                 return;
             }
+
             cboQuestionnaire.Items.Clear();
             cboQuestionnaire.Items.AddRange(questionnaires.Cast<object>().ToArray());
             cboQuestionnaire.SelectedIndex = 0;
@@ -155,8 +159,9 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
 
         private void btnBrowseQuestionnaireFile_Click(object sender, EventArgs e)
         {
-            openFileDialog.FileName = "";
+            openFileDialog.FileName = string.Empty;
             openFileDialog.Filter = "BPKG files (*.bpkg)|*.bpkg|ZIP files (*.zip)|*.zip";
+            openFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var fileDialogResult = openFileDialog.ShowDialog();
             if (fileDialogResult == DialogResult.OK)
             {
@@ -164,7 +169,7 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
             }
             else if (fileDialogResult == DialogResult.Cancel)
             {
-                txtQuestionnaireFile.Text = "";
+                txtQuestionnaireFile.Text = string.Empty;
             }
             else
             {
@@ -182,12 +187,22 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
                 MessageBox.Show("Please select a questionnaire package file", "Install questionnaire", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+
+            const string message = "The questionnaire will be installed using the data interface file from within the package and will not be automatically configured to point to the backend MySQL instance.\n\nAre you sure you want to continue?";
+            const string caption = "Install Questionnaire";
+            var result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
             Cursor = Cursors.WaitCursor;
             try
             {
                 QuestionnaireHelper.GetInstance(_connectionModel).InstallQuestionnaire(questionnaireName, serverPark, questionnaireFile);
                 PopulateServerParkAndQuestionnaire();
-                txtQuestionnaireFile.Text = "";
+                txtQuestionnaireFile.Text = string.Empty;
                 System.Media.SystemSounds.Beep.Play();
                 this.Activate();
                 MessageBox.Show("Install successful", "Install questionnaire", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -214,6 +229,12 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
                 MessageBox.Show("Please provide primary key from and number of cases", "Create cases", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+
+            if (!ConfirmDataLoss())
+            {
+                return;
+            }
+
             Cursor = Cursors.WaitCursor;
             try
             {
@@ -234,14 +255,9 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
 
         private void btnBrowseCaseFile_Click(object sender, EventArgs e)
         {
-            openFileDialog.FileName = "";
+            openFileDialog.FileName = string.Empty;
             openFileDialog.Filter = "JSON files (*.json)|*.json";
-            var caseFilesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\Blaise.Questionnaire.Data.Tool.Helpers\CaseFiles");
-            // to do - fix ^
-            if (Directory.Exists(caseFilesDirectory))
-            {
-                openFileDialog.InitialDirectory = caseFilesDirectory;
-            }
+            openFileDialog.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var fileDialogResult = openFileDialog.ShowDialog();
             if (fileDialogResult == DialogResult.OK)
             {
@@ -249,7 +265,7 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
             }
             else if (fileDialogResult == DialogResult.Cancel)
             {
-                txtCaseFile.Text = "";
+                txtCaseFile.Text = string.Empty;
             }
             else
             {
@@ -267,6 +283,12 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
                 MessageBox.Show("Please select a case JSON file", "Create cases", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+
+            if (!ConfirmDataLoss())
+            {
+                return;
+            }
+
             Cursor = Cursors.WaitCursor;
             try
             {
@@ -284,6 +306,14 @@ namespace Blaise.Questionnaire.Data.Tool.Gui
             {
                 Cursor = Cursors.Default;
             }
+        }
+
+        private bool ConfirmDataLoss()
+        {
+            const string message = "Warning: This will remove all existing cases from the questionnaire before creating new ones.\n\nAre you sure you want to continue?";
+            const string caption = "Confirm Data Deletion";
+            var result = MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            return result == DialogResult.OK;
         }
     }
 }
